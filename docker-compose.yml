@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+    app:
+      build: .
+      command: sh -c "pip install -r requirements.txt && python manage.py runserver 0.0.0.0:8000"
+      volumes:
+        - .:/predict_category
+      ports:
+        - "8000:8000"
+      depends_on:
+        - db
+
+    db:
+      image: postgres:12
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=password
+        - POSTGRES_DB=db
+      volumes:
+        - postgres:/var/lib/postgresql/new
+
+    rabbitmq:
+      image: rabbitmq:3.8
+      environment:
+        RABBITMQ_DEFAULT_USER: "rabbitmq"
+        RABBITMQ_DEFAULT_PASS: "rabbitmq"
+        RABBITMQ_DEFAULT_VHOST: "/"
+      ports:
+        - 5672:5672  
+
+    celery:
+      build: .
+      command: celery -A api worker -l info
+      volumes:
+        - .:/predict_category
+      depends_on: 
+        - rabbitmq
+      links:
+        - rabbitmq
+      restart: "always"
+
+volumes:
+  postgres:
