@@ -21,7 +21,7 @@ def find_file_name():
 
 
 def unpacking(file_name):
-    '''Утилита, которая распаковывает файл из .gz, После удаляет .gz'''
+    '''Утилита, которая распаковывает файл из .gz.'''
     try:
         with gzip.open(f'{file_name}.gz', 'rb') as f_in:
             with open(file_name, 'wb') as f_out:
@@ -34,6 +34,7 @@ def unpacking(file_name):
     
     
 def delete_unpacking_gz(file_name: str):
+    '''Утилита, которая удаляет файлы с расширением .gz'''
     try:
         os.remove(f'{file_name}.gz')
     except Exception as e:
